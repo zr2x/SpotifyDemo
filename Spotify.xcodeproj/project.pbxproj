@@ -30,6 +30,7 @@
 		C0C7E2C22D2C2BBB00AF7298 /* Artist.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C7E2C12D2C2BBB00AF7298 /* Artist.swift */; };
 		C0C7E2C42D2C2BC700AF7298 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C7E2C32D2C2BC700AF7298 /* Profile.swift */; };
 		C0C7E2C62D2D0E4200AF7298 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C7E2C52D2D0E4200AF7298 /* Extensions.swift */; };
+		C0C7E2C82D2EA88500AF7298 /* AuthResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C7E2C72D2EA88500AF7298 /* AuthResponse.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,7 @@
 		C0C7E2C12D2C2BBB00AF7298 /* Artist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artist.swift; sourceTree = "<group>"; };
 		C0C7E2C32D2C2BC700AF7298 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		C0C7E2C52D2D0E4200AF7298 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		C0C7E2C72D2EA88500AF7298 /* AuthResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthResponse.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +145,7 @@
 				C0C7E2BF2D2C2BB400AF7298 /* AudioTrack.swift */,
 				C0C7E2C12D2C2BBB00AF7298 /* Artist.swift */,
 				C0C7E2C32D2C2BC700AF7298 /* Profile.swift */,
+				C0C7E2C72D2EA88500AF7298 /* AuthResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -260,6 +263,7 @@
 				C0C7E2AC2D2C283F00AF7298 /* WelcomeViewController.swift in Sources */,
 				C0C7E2BA2D2C2A0F00AF7298 /* ApiCaller.swift in Sources */,
 				C0C7E2B02D2C284C00AF7298 /* ProfileViewController.swift in Sources */,
+				C0C7E2C82D2EA88500AF7298 /* AuthResponse.swift in Sources */,
 				C0C7E2BC2D2C2A1700AF7298 /* HapticsManager.swift in Sources */,
 				C0C7E2C02D2C2BB400AF7298 /* AudioTrack.swift in Sources */,
 				C0C7E2892D2C22AE00AF7298 /* HomeViewController.swift in Sources */,
@@ -421,8 +425,7 @@
 				INFOPLIST_FILE = Spotify/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -449,8 +452,7 @@
 				INFOPLIST_FILE = Spotify/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -44,7 +44,16 @@ class WelcomeViewController: UIViewController {
     }
     
     private func handleSighIn(success: Bool) {
-        //TODO: handler sigin
+        guard success else {
+            let alert = UIAlertController(title: "Ops", message: "Something went wrong", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+            present(alert, animated: true)
+            return
+        }
+        
+        let tabBarVc = TabBarController()
+        tabBarVc.modalPresentationStyle = .fullScreen
+        present(tabBarVc, animated: true)
     }
 
     // MARK: - Actions

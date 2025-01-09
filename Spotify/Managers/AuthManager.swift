@@ -14,49 +14,157 @@ final class AuthManager {
     struct Constants {
         static let clientID = "YOUR_CLIENT_ID"
         static let clientSecret = "YOUR_CLIENT_SECRET"
+        static let tokenAPIURL = "https://accounts.spotify.com/api/token"
+        static let redirectUri = "https://steamcommunity.com/"
+        static let scopes = "user-read-private%20playlist-modify-public%20playlist-read-private%20playlist-modify-private%20user-follow-read%20user-library-modify%20user-library-read%20user-read-email"
     }
     
     private init() {}
     
     public var sighInURL: URL? {
         let base = "https://accounts.spotify.com/authorize"
-        let scopes = "user-read-private"
         let redirectUri = "https://steamcommunity.com/"
-        let string = "\(base)?response_type=code&client_id=\(Constants.clientID)&scope=\(scopes)&redirect_uri=\(redirectUri)"
+        let string = "\(base)?response_type=code&client_id=\(Constants.clientID)&scope=\(Constants.scopes)&redirect_uri=\(Constants.redirectUri)"
         
         return URL(string: string)
     }
     
     var isSignedIn: Bool {
-        return false
+        return accessToken != nil
     }
     
+    // MARK: - Private methods
+    
     private var accessToken: String? {
-        return nil
+        UserDefaults.standard.string(forKey: "accessToken")
     }
     
     private var refreshToken: String? {
-        return nil
+        UserDefaults.standard.string(forKey: "refreshToken")
     }
     
     private var tokenExperationDate: Date? {
-        return nil
+        UserDefaults.standard.object(forKey: "experation") as? Date
     }
     
     private var shouldRefreshToken: Bool {
-        return false
+        guard let experationDate = tokenExperationDate else {
+            return false
+        }
+        
+        let currentDate = Date()
+        let fiveMinutes = TimeInterval(300)
+        return currentDate.addingTimeInterval(fiveMinutes) >= experationDate
     }
     
-    private func cacheToke() {
-        
+    private func cacheToke(result: AuthResponse) {
+        UserDefaults.standard.setValue(result.accessToken, forKey: "accessToken")
+        if let refreshToken = result.refreshToken {
+            UserDefaults.standard.setValue(refreshToken, forKey: "refreshToken")
+        }
+        UserDefaults.standard.setValue(Date().addingTimeInterval(TimeInterval(result.expiresIn)),
+                                       forKey: "experation")
+
     }
+    
+    // MARK: - Public methods
     
     public func exchangeCodeForToken(code: String, completion: @escaping ((Bool) -> Void)) {
+        guard let url = URL(string: Constants.tokenAPIURL) else { return }
         
+        var components = URLComponents()
+        components.queryItems = [URLQueryItem(name: "grand_type", 
+                                              value: "authorization_code"),
+                                 URLQueryItem(name: "code",
+                                              value: code),
+                                 URLQueryItem(name: "redirect_uri",
+                                              value: Constants.redirectUri)]
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = components.query?.data(using: .utf8)
+        request.setValue("application/x-www-form-urlencoded", 
+                         forHTTPHeaderField: "Content-Type")
+        let basicToken = Constants.clientID+":"+Constants.clientSecret
+        let data = basicToken.data(using: .utf8)
+        guard let base64String = data?.base64EncodedString() else {
+            print("Failed to get base64")
+            completion(false)
+            return
+        }
+        request.setValue("Basic \(base64String)", forHTTPHeaderField: "Authorization")
+
+        
+        let task = URLSession.shared.dataTask(with: request) { [weak self] data, _, error in
+            guard let data = data, error == nil else {
+                return completion(false)
+            }
+            
+            do {
+                let result = try JSONDecoder().decode(AuthResponse.self, from: data)
+                
+                self?.cacheToke(result: result)
+                completion(true)
+            }
+            catch {
+                print(error.localizedDescription)
+                completion(false)
+            }
+        }
+        task.resume()
     }
     
-    public func refreshAccessToken() {
+    public func refreshIfNeeded(completion: @escaping ((Bool) -> Void)) {
+        guard shouldRefreshToken else {
+            completion(true)
+            return
+        }
+        
+        guard let refreshToken = self.refreshToken else {
+            return
+        }
+        
+        guard let url = URL(string: Constants.tokenAPIURL) else { return }
+
+        
+        var components = URLComponents()
+        components.queryItems = [URLQueryItem(name: "grand_type",
+                                              value: "refresh_token"),
+                                 URLQueryItem(name: "refresh_token    ",
+                                              value: refreshToken)]
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = components.query?.data(using: .utf8)
+        request.setValue("application/x-www-form-urlencoded",
+                         forHTTPHeaderField: "Content-Type")
+        let basicToken = Constants.clientID+":"+Constants.clientSecret
+        let data = basicToken.data(using: .utf8)
+        guard let base64String = data?.base64EncodedString() else {
+            print("Failed to get base64")
+            completion(false)
+            return
+        }
+        request.setValue("Basic \(base64String)", forHTTPHeaderField: "Authorization")
+
+        
+        let task = URLSession.shared.dataTask(with: request) { [weak self] data, _, error in
+            guard let data = data, error == nil else {
+                return completion(false)
+            }
+            
+            do {
+                let result = try JSONDecoder().decode(AuthResponse.self, from: data)
+                
+                self?.cacheToke(result: result)
+                completion(true)
+            }
+            catch {
+                print(error.localizedDescription)
+                completion(false)
+            }
+        }
+        task.resume()
         
     }
-
 }
