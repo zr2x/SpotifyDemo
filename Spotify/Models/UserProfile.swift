@@ -15,7 +15,7 @@ struct UserProfile: Codable {
     let externalUrls: [String: String]
     let id: String
     let product: String
-    let images: [UserImage]
+    let images: [APIImage]
     
     enum CodingKeys: String, CodingKey {
         case displayName = "display_name"
@@ -25,7 +25,5 @@ struct UserProfile: Codable {
     }
 }
 
-struct UserImage: Codable {
-    let url: String
-}
+
 

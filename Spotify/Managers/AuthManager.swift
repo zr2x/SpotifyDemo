@@ -59,7 +59,7 @@ final class AuthManager {
         return currentDate.addingTimeInterval(fiveMinutes) >= experationDate
     }
     
-    private func cacheToke(result: AuthResponse) {
+    private func cacheToken(result: AuthResponse) {
         UserDefaults.standard.setValue(result.accessToken, forKey: "accessToken")
         if let refreshToken = result.refreshToken {
             UserDefaults.standard.setValue(refreshToken, forKey: "refreshToken")
@@ -105,7 +105,7 @@ final class AuthManager {
             do {
                 let result = try JSONDecoder().decode(AuthResponse.self, from: data)
                 
-                self?.cacheToke(result: result)
+                self?.cacheToken(result: result)
                 completion(true)
             }
             catch {
@@ -183,7 +183,7 @@ final class AuthManager {
                 let result = try JSONDecoder().decode(AuthResponse.self, from: data)
                 self?.onRefreshBlocks.forEach({ $0(result.accessToken) })
                 self?.onRefreshBlocks.removeAll()
-                self?.cacheToke(result: result)
+                self?.cacheToken(result: result)
                 completion?(true)
             }
             catch {
