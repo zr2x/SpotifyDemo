@@ -26,9 +26,63 @@ final class ApiCaller {
         case somethingWentWrong
     }
     
+    // MARK: - Albums
+    
+    public func getAlbumDetails(for album: Album, completion: @escaping (Result<AlbumsResponse, Error>) -> Void) {
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/albums/\(album.id)"),
+            type: .GET
+        ) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failetToGetData))
+                    return
+                }
+                
+                do {
+                    let result = try JSONDecoder().decode(AlbumsResponse.self, from: data)
+                    completion(.success(result))
+                }
+                catch {
+                    completion(.failure(APIError.somethingWentWrong))
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    // MARK: - Playlists
+    
+    public func getPlaylistDetails(for playlist: Playlist, completion: @escaping (Result<PlaylistDetailResponse, Error>) -> Void) {
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/playlists/\(playlist.id)"),
+            type: .GET
+        ) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failetToGetData))
+                    return
+                }
+                
+                do {
+                    let result = try JSONDecoder().decode(PlaylistDetailResponse.self, from: data)
+                    completion(.success(result))
+                }
+                catch {
+                    completion(.failure(APIError.somethingWentWrong))
+                }
+            }
+            task.resume()
+        }
+    }
+
+    
+    // MARK: - Profle
     public func getCurrentUserProfile(completion: @escaping (Result<UserProfile, Error>) -> Void) {
-        createRequest(with: URL(string: Constants.baseAPIURL + "/me"),
-                      type: .GET) { baseRequest in
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/me"),
+                      type: .GET
+        ) { baseRequest in
             let task = URLSession.shared.dataTask(with: baseRequest) { data, _, error in
                 guard let data = data, error == nil else {
                     completion(.failure(APIError.failetToGetData))
@@ -46,6 +100,7 @@ final class ApiCaller {
             task.resume()
         }
     }
+    // MARK: - Browse calls
     
     public func getNewReleases(completion: @escaping ((Result<NewReleasesResponse, Error>)) -> Void) {
         createRequest(
@@ -145,8 +200,10 @@ final class ApiCaller {
     }
     
     // MARK: - Private
-    
-    private func createRequest(with url: URL?, type: HTTPMethod, completion: @escaping (URLRequest) -> Void) {
+    private func createRequest(with url: URL?,
+                               type: HTTPMethod,
+                               completion: @escaping (URLRequest) -> Void
+    ) {
         AuthManager.shared.withValidToken { token in
             guard let url = url else {
                 return

@@ -1,17 +1,17 @@
 //
-//  PlaylistViewController.swift
+//  AlbumViewController.swift
 //  Spotify
 //
-//  Created by Искандер Ситдиков on 06.01.2025.
+//  Created by Искандер Ситдиков on 23.06.2025.
 //
 
 import UIKit
 
-class PlaylistViewController: UIViewController {
-    private let playlist: Playlist
+class AlbumViewController: UIViewController {
+    private let album: Album
     
-    init(playlist: Playlist) {
-        self.playlist = playlist
+    init(album: Album) {
+        self.album = album
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -22,10 +22,10 @@ class PlaylistViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = playlist.name
+        title = album.name
         view.backgroundColor = .systemBackground
         
-        ApiCaller.shared.getPlaylistDetails(for: playlist) { result in
+        ApiCaller.shared.getAlbumDetails(for: album) { result in
             switch result {
             case .success(let model):
                 break
@@ -35,4 +35,3 @@ class PlaylistViewController: UIViewController {
         }
     }
 }
-
