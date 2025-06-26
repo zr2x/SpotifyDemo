@@ -9,6 +9,7 @@ import UIKit
 import SDWebImage
 
 final class NewReleasesCollectionViewCell: UICollectionViewCell {
+    static let identifier = "NewReleasesCollectionViewCell"
     
     private var albumImageView: UIImageView = {
         let imageView = UIImageView()
@@ -37,9 +38,6 @@ final class NewReleasesCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-
-    
-    static let identifire = "NewReleasesCollectionViewCell"
     
     override init(frame: CGRect) {
         super.init(frame: frame)
