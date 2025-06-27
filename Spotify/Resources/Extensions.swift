@@ -56,3 +56,9 @@ extension String {
         return DateFormatter.displayDateFormatter.string(from: date)
     }
 }
+
+extension Collection {
+    var isNotEmpty: Bool {
+        return !isEmpty
+    }
+}
