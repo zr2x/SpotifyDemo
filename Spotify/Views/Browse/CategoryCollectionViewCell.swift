@@ -1,5 +1,5 @@
 //
-//  GenreCollectionViewCell.swift
+//  CategoryCollectionViewCell.swift
 //  Spotify
 //
 //  Created by Искандер Ситдиков on 27.06.2025.
@@ -7,8 +7,8 @@
 
 import UIKit
 
-class GenreCollectionViewCell: UICollectionViewCell {
-    static let identifier = "GenreCollectionViewCell"
+class CategoryCollectionViewCell: UICollectionViewCell {
+    static let identifier = "CategoryCollectionViewCell"
     
     private let colors: [UIColor] = [.purple, .systemBlue, .systemMint, .systemGreen]
     
@@ -23,7 +23,7 @@ class GenreCollectionViewCell: UICollectionViewCell {
                 weight: .regular
             )
         )
-        
+        imageView.layer.cornerRadius = 8
         return imageView
     }()
     
@@ -53,7 +53,7 @@ class GenreCollectionViewCell: UICollectionViewCell {
         )
         
         imageView.frame = CGRect(x: contentView.width / 2,
-                                 y: 0,
+                                 y: 10,
                                  width: contentView.width / 2,
                                  height: contentView.height / 2
         )
@@ -74,8 +74,9 @@ class GenreCollectionViewCell: UICollectionViewCell {
         contentView.layer.masksToBounds = true
     }
     
-    func configure(with title: String) {
-        label.text = title
+    func configure(with viewModel: CategoryCollectionViewCellViewModel) {
+        label.text = viewModel.title
+        imageView.sd_setImage(with: viewModel.imageURL)
         
         contentView.backgroundColor = colors.randomElement()
     }

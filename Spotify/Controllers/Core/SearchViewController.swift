@@ -8,6 +8,9 @@
 import UIKit
 
 class SearchViewController: UIViewController, UISearchResultsUpdating {
+    
+    private var categories = [Category]()
+
     private let searchController: UISearchController = {
         
         let vc = UISearchController(searchResultsController: SearchResultsViewController())
@@ -24,13 +27,29 @@ class SearchViewController: UIViewController, UISearchResultsUpdating {
             collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { _, _ in
                 return self.createLayout()
         }))
-        collectionView.register(GenreCollectionViewCell.self, forCellWithReuseIdentifier: GenreCollectionViewCell.identifier)
+        collectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.identifier)
         return collectionView
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        fetchCategories()
+    }
+    
+    private func fetchCategories() {
+        ApiCaller.shared.getCategories { [weak self] result in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let categories):
+                    self.categories = categories
+                    self.collectionView.reloadData()
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -96,11 +115,26 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GenreCollectionViewCell.identifier, for: indexPath) as? GenreCollectionViewCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell else {
             return UICollectionViewCell()
         }
         
-        cell.configure(with: "Genre")
+        let category = categories[indexPath.row]
+        let viewModel = CategoryCollectionViewCellViewModel(
+            title: category.name,
+            imageURL:
+                URL(string: category.icons.first?.url ?? "")
+        )
+        
+        cell.configure(with: viewModel)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        let category = categories[indexPath.row]
+        let vc = CategoryViewController(category: category)
+        vc.navigationItem.largeTitleDisplayMode = .never
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
