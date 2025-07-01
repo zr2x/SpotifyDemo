@@ -9,6 +9,7 @@ import UIKit
 
 class AlbumViewController: UIViewController {
     private let album: Album
+    private var tracks = [AudioTack]()
     private var viewModels = [AlbumCollectionViewCellViewModel]()
     
     private lazy var collectionView: UICollectionView = {
@@ -62,7 +63,8 @@ class AlbumViewController: UIViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let model):
-                    self?.viewModels = model.items.compactMap({
+                    self?.tracks = model.tracks.items
+                    self?.viewModels = model.tracks.items.compactMap({
                         AlbumCollectionViewCellViewModel(
                             trackName: $0.name,
                             artistName: $0.artists.first?.name ?? "-"
@@ -126,7 +128,8 @@ extension AlbumViewController: UICollectionViewDelegate, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        
+        let track = tracks[indexPath.row]
+        PlaybackPresenter.startPlaybackTrack(from: self, track: track)
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -153,7 +156,7 @@ extension AlbumViewController: UICollectionViewDelegate, UICollectionViewDataSou
 
 extension AlbumViewController: PlaylistHeaderCollectionReusableViewDelegate {
     func didTapPlayAll(_ header: PlaylistHeaderCollectionReusableView) {
-        
+        PlaybackPresenter.startPlaybackTracks(from: self, tracks: tracks)
     }
 }
 

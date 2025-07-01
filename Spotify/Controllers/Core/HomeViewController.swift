@@ -422,7 +422,8 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             
             navigationController?.pushViewController(albumVC, animated: true)
         case .recommendedTracks:
-            let item = tracks[indexPath.row]
+            let track = tracks[indexPath.row]
+            PlaybackPresenter.startPlaybackTrack(from: self, track: track)
         }
     }
     
