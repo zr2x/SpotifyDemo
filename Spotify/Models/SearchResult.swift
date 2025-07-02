@@ -10,6 +10,6 @@ import Foundation
 enum SearchResult {
     case artist(model: Artist)
     case album(model: Album)
-    case track(model: AudioTack)
+    case track(model: AudioTrack)
     case playlists(model: Playlist)
 }

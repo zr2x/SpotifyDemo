@@ -27,5 +27,5 @@ struct SearchPlaylistsResponse: Codable {
 }
 
 struct SearchTracksResponse: Codable {
-    let items: [AudioTack]
+    let items: [AudioTrack]
 }

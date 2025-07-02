@@ -315,11 +315,11 @@
 			children = (
 				C0C7E2A92D2C283800AF7298 /* AuthViewController.swift */,
 				C04F154F2E0EDA7D00FD0BD5 /* CategoryViewController.swift */,
+				C0C7E2B12D2C28ED00AF7298 /* PlaylistViewController.swift */,
 				C0C7E2AB2D2C283F00AF7298 /* WelcomeViewController.swift */,
 				C0C7E2AD2D2C284600AF7298 /* SettingsViewController.swift */,
 				C0C7E2AF2D2C284C00AF7298 /* ProfileViewController.swift */,
 				C0C7E2B32D2C28F400AF7298 /* PlayerViewController.swift */,
-				C0C7E2B12D2C28ED00AF7298 /* PlaylistViewController.swift */,
 				C04F15332E097B5800FD0BD5 /* AlbumViewController.swift */,
 				C0C7E2B52D2C291B00AF7298 /* SearchResultsViewController.swift */,
 			);

@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct AudioTack: Codable {
-    let album: Album?
+struct AudioTrack: Codable {
+    var album: Album?
     let artists: [Artist]
     let available_markets: [String]
     let disc_number: Int
@@ -16,4 +16,5 @@ struct AudioTack: Codable {
     let external_urls: [String: String]
     let id: String
     let name: String
+    let preview_url: String? 
 }

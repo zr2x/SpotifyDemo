@@ -11,14 +11,23 @@ protocol PlayerControlsViewDelegate: AnyObject {
     func didTapPlayPauseButton(_ playerControlsView: PlayerControlsView)
     func didTapBackButton(_ playerControlsView: PlayerControlsView)
     func didTapForwardButton(_ playerControlsView: PlayerControlsView)
+    func didVolumeChanged(_ playerControlsView: PlayerControlsView, value: Float)
+}
+
+struct PlayerControlsViewViewModel {
+    let title: String
+    let subtitle: String
 }
 
 final class PlayerControlsView: UIView {
     weak var delegate: PlayerControlsViewDelegate?
     
-    private let volumeSlider: UISlider = {
+    var isPlaying: Bool = true
+    
+    private lazy var volumeSlider: UISlider = {
         let slider = UISlider()
         slider.value = 0.5
+        slider.addTarget(self, action: #selector(didVolumeChanged), for: .valueChanged)
         return slider
     }()
     
@@ -126,9 +135,25 @@ final class PlayerControlsView: UIView {
         clipsToBounds = true
     }
     
+    public func configure(with viewModel: PlayerControlsViewViewModel) {
+        self.nameLabel.text = viewModel.title
+        self.subtitleLabel.text = viewModel.subtitle
+    }
+    
+    // MARK - Actions
     @objc
     private func didTapPlayPause() {
+        isPlaying.toggle()
         delegate?.didTapPlayPauseButton(self)
+        
+        let image = UIImage(
+            systemName: isPlaying ? "pause" : "play.fill",
+            withConfiguration: UIImage.SymbolConfiguration(
+                pointSize: 34,
+                weight: .regular
+            )
+        )
+        playPauseButton.setImage(image, for: .normal)
     }
     
     @objc
@@ -140,5 +165,10 @@ final class PlayerControlsView: UIView {
     @objc
     private func didTapForward() {
         delegate?.didTapForwardButton(self)
+    }
+    
+    @objc
+    private func didVolumeChanged() {
+        delegate?.didVolumeChanged(self, value: volumeSlider.value)
     }
 }

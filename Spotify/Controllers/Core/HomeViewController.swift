@@ -29,7 +29,7 @@ class HomeViewController: UIViewController {
     private var sections = [BrowseSectionType]()
     private var newAlbums: [Album] = []
     private var playlist: [Playlist] = []
-    private var tracks: [AudioTack] = []
+    private var tracks: [AudioTrack] = []
     
     // MARK: - UI
     private lazy var collectionView: UICollectionView = {
@@ -192,7 +192,7 @@ class HomeViewController: UIViewController {
         }
     }
     
-    private func configureModels(newAlbums: [Album], playlist: [Playlist], tracks: [AudioTack]) {
+    private func configureModels(newAlbums: [Album], playlist: [Playlist], tracks: [AudioTrack]) {
         self.newAlbums = newAlbums
         self.playlist = playlist
         self.tracks = tracks
@@ -423,7 +423,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             navigationController?.pushViewController(albumVC, animated: true)
         case .recommendedTracks:
             let track = tracks[indexPath.row]
-            PlaybackPresenter.startPlaybackTrack(from: self, track: track)
+            PlaybackPresenter.shared.startPlaybackTrack(from: self, track: track)
         }
     }
     

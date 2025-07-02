@@ -8,6 +8,6 @@
 import Foundation
 
 struct RecomendationsResponse: Codable {
-    let tracks: [AudioTack]
+    let tracks: [AudioTrack]
 }
 

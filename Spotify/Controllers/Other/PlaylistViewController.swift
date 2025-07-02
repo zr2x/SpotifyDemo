@@ -9,7 +9,7 @@ import UIKit
 
 class PlaylistViewController: UIViewController {
     private let playlist: Playlist
-    private var tracks = [AudioTack]()
+    private var tracks = [AudioTrack]()
     private var viewModels = [RecommendedTracksCellViewModel]()
     
     private lazy var collectionView: UICollectionView = {
@@ -49,6 +49,7 @@ class PlaylistViewController: UIViewController {
         collectionView.frame = view.bounds
     }
     
+    // MARK: - Private methods
     private func setupViews() {
         title = playlist.name
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didTapShare))
@@ -80,6 +81,7 @@ class PlaylistViewController: UIViewController {
         }
     }
     
+    // MARK: - Actions
     @objc
     private func didTapShare() {
         guard let url = URL(string: playlist.external_urls["spotify"] ?? "") else {
@@ -124,6 +126,7 @@ class PlaylistViewController: UIViewController {
     }
 }
 
+// MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension PlaylistViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         viewModels.count
@@ -141,7 +144,7 @@ extension PlaylistViewController: UICollectionViewDelegate, UICollectionViewData
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         let track = tracks[indexPath.row]
-        PlaybackPresenter.startPlaybackTrack(from: self, track: track)
+        PlaybackPresenter.shared.startPlaybackTrack(from: self, track: track)
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -166,8 +169,9 @@ extension PlaylistViewController: UICollectionViewDelegate, UICollectionViewData
     }
 }
 
+//MARK: - PlaylistHeaderCollectionReusableViewDelegate
 extension PlaylistViewController: PlaylistHeaderCollectionReusableViewDelegate {
     func didTapPlayAll(_ header: PlaylistHeaderCollectionReusableView) {
-        PlaybackPresenter.startPlaybackTracks(from: self, tracks: tracks)
+        PlaybackPresenter.shared.startPlaybackTracks(from: self, tracks: tracks)
     }
 }
