@@ -52,7 +52,11 @@ class AlbumViewController: UIViewController {
         title = album.name
         view.backgroundColor = .systemBackground
         
-        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(didTapAddAlbum)
+        )
         view.addSubview(collectionView)
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -109,6 +113,25 @@ class AlbumViewController: UIViewController {
         ]
         
         return section
+    }
+    
+    @objc
+    private func didTapAddAlbum() {
+        let actionSheet = UIAlertController(title: album.name, message: "Do you want to save this album?", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actionSheet.addAction(UIAlertAction(title: "Add", style: .default, handler: { [weak self] _ in
+            guard let self else { return }
+            ApiCaller.shared.saveAlbum(album: self.album, completion: { success in
+                if success {
+                    NotificationCenter.default.post(name: .albumSavedNotification, object: nil)
+                    let alert = UIAlertController(title: "Successfully saved", message: nil, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .default))
+                    self.present(alert, animated: true)
+                }
+            })
+        }))
+        
+        present(actionSheet, animated: true)
     }
 }
 

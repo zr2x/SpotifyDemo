@@ -62,3 +62,7 @@ extension Collection {
         return !isEmpty
     }
 }
+
+extension Notification.Name {
+    static let albumSavedNotification = Notification.Name("albumSavedNotification")
+}

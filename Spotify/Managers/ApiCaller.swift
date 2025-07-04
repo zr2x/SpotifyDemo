@@ -13,6 +13,7 @@ final class ApiCaller {
     enum HTTPMethod: String {
         case GET
         case POST
+        case PUT
         case DELETE
     }
     
@@ -46,6 +47,54 @@ final class ApiCaller {
                 }
                 catch {
                     completion(.failure(APIError.somethingWentWrong))
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    public func getCurrentUserAlbums(completion: @escaping (Result<[Album], Error>) -> Void) {
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/me/albums"),
+            type: .GET
+        ) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failetToGetData))
+                    return
+                }
+                
+                do {
+                    let result = try JSONDecoder().decode(LibraryAlbumsResponse.self, from: data)
+                    let albums = result.items.compactMap({ $0.album })
+                    completion(.success(albums))
+                }
+                catch {
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    public func saveAlbum(album: Album, completion: @escaping (Bool) -> Void) {
+        createRequest(
+            with: URL(string: Constants.baseAPIURL + "/me/albums/?ids=\(album.id)"),
+            type: .PUT
+        ) { baseRequest in
+            var request = baseRequest
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            let task = URLSession.shared.dataTask(with: request) { data, respose, error in
+                guard let code = (respose as? HTTPURLResponse)?.statusCode, error == nil else {
+                    completion(false)
+                    return
+                }
+                
+                if code < 300 && code >= 200 {
+                    completion(true)
+                } else {
+                    completion(false)
                 }
             }
             task.resume()
