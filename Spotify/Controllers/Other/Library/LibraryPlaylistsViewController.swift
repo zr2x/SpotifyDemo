@@ -154,16 +154,18 @@ extension LibraryPlaylistsViewController: UITableViewDelegate, UITableViewDataSo
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
         let playlist = playlists[indexPath.row]
-        let vc = PlaylistViewController(playlist: playlist)
         
         guard selectionHandler == nil else {
             selectionHandler?(playlist)
             dismiss(animated: true)
             return
         }
-        tableView.deselectRow(at: indexPath, animated: true)
 
+        let vc = PlaylistViewController(playlist: playlist)
+        vc.isOwner = true
         vc.navigationItem.largeTitleDisplayMode = .never
         present(vc, animated: true)
     }

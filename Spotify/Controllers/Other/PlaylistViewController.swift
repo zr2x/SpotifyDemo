@@ -11,6 +11,7 @@ class PlaylistViewController: UIViewController {
     private let playlist: Playlist
     private var tracks = [AudioTrack]()
     private var viewModels = [RecommendedTracksCellViewModel]()
+    public var isOwner = false
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
@@ -41,6 +42,7 @@ class PlaylistViewController: UIViewController {
         super.viewDidLoad()
         
         setupViews()
+        setupGesture()
         fetchPlaylistData()
     }
     
@@ -58,6 +60,12 @@ class PlaylistViewController: UIViewController {
         view.addSubview(collectionView)
         collectionView.delegate = self
         collectionView.dataSource = self
+    }
+    
+    private func setupGesture() {
+        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
+        
+        collectionView.addGestureRecognizer(gesture)
     }
     
     private func fetchPlaylistData() {
@@ -123,6 +131,33 @@ class PlaylistViewController: UIViewController {
         ]
         
         return section
+    }
+    
+    @objc
+    private func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
+        
+        let touchPoint = gesture.location(in: collectionView)
+        guard let indexPath = collectionView.indexPathForItem(at: touchPoint) else { return }
+        
+        let trackToDelete = tracks[indexPath.row]
+        
+        let actionSheet = UIAlertController(title: trackToDelete.name, message: "Do you want to remove this song from the playtlist?", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actionSheet.addAction(UIAlertAction(title: "Remove", style: .destructive, handler: { [weak self] _ in
+            guard let self else { return }
+            ApiCaller.shared.removeTrackFromPlaylist(track: trackToDelete, playlist: self.playlist) { success in
+                DispatchQueue.main.async {
+                    if success {
+                        self.tracks.remove(at: indexPath.row)
+                        self.viewModels.remove(at: indexPath.row)
+                        self.collectionView.reloadData()
+                    }
+                }
+            }
+        }))
+        
+        present(actionSheet, animated: true)
     }
 }
 
