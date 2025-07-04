@@ -65,6 +65,7 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         fetchData()
+        addLongTapGesture()
     }
     
     override func viewDidLayoutSubviews() {
@@ -84,6 +85,12 @@ class HomeViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(acitivityIndicator)
         
+    }
+    
+    private func addLongTapGesture() {
+        let longTapGest = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
+        
+        collectionView.addGestureRecognizer(longTapGest)
     }
     
     private func createSectionLayout(section: Int) -> NSCollectionLayoutSection {
@@ -223,6 +230,40 @@ class HomeViewController: UIViewController {
         let vc = SettingsViewController()
         vc.navigationItem.largeTitleDisplayMode = .never
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc
+    private func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
+        let touchPoint = gesture.location(in: collectionView)
+        
+        guard let indexPath = collectionView.indexPathForItem(at: touchPoint), indexPath.section == 2 else { return }
+        
+        let model = tracks[indexPath.row]
+        let actionSheet = UIAlertController(
+            title: model.name,
+            message: "Would you like to add this to a playlist?",
+            preferredStyle: .actionSheet
+        )
+        
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actionSheet.addAction(UIAlertAction(title: "Add to playlist", style: .default, handler: { [weak self] _ in
+            DispatchQueue.main.async {
+                let vc = LibraryPlaylistsViewController()
+                vc.selectionHandler = { playlist in
+                    ApiCaller.shared.addTrackToPlaylist(track: model, playlist: playlist) { success in
+                        if success {
+                            let alert = UIAlertController(title: "Successfully added", message: nil, preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "Ok", style: .default))
+                            self?.present(alert, animated: true)
+                        }
+                    }
+                }
+                vc.title = "Select playlist"
+                self?.present(UINavigationController(rootViewController: vc), animated: true)
+            }
+        }))
+        present(actionSheet, animated: true)
     }
     
     // MARK: - NSCollectionLayoutSection

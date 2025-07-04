@@ -119,7 +119,7 @@ final class PlaylistHeaderCollectionReusableView: UICollectionReusableView {
     }
     
     func configure(with viewModel: PlaylistHeaderViewViewModel) {
-        playListImageView.sd_setImage(with: viewModel.playlistImageURL)
+        playListImageView.sd_setImage(with: viewModel.playlistImageURL, placeholderImage: UIImage(systemName: "photo"))
         playlistNameLabel.text = viewModel.playlistName
         ownerLabel.text = viewModel.ownerName
         descriptionLabel.text = viewModel.playlistDescription

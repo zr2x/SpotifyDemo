@@ -8,6 +8,8 @@
 import UIKit
 
 class LibraryPlaylistsViewController: UIViewController {
+    
+    public var selectionHandler: ((Playlist) -> Void?)?
 
     private var playlists = [Playlist]()
     
@@ -88,6 +90,10 @@ class LibraryPlaylistsViewController: UIViewController {
         view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = self
+        
+        if selectionHandler != nil {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didTapClose))
+        }
     }
     
     private func setupEmptyView() {
@@ -107,6 +113,11 @@ class LibraryPlaylistsViewController: UIViewController {
             emptyPlaylistView.isHidden = true
             tableView.isHidden = false
         }
+    }
+    
+    @objc
+    private func didTapClose() {
+        dismiss(animated: true)
     }
 }
 
@@ -140,5 +151,20 @@ extension LibraryPlaylistsViewController: UITableViewDelegate, UITableViewDataSo
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let playlist = playlists[indexPath.row]
+        let vc = PlaylistViewController(playlist: playlist)
+        
+        guard selectionHandler == nil else {
+            selectionHandler?(playlist)
+            dismiss(animated: true)
+            return
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        vc.navigationItem.largeTitleDisplayMode = .never
+        present(vc, animated: true)
     }
 }
