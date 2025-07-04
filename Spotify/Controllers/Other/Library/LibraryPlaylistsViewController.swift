@@ -59,8 +59,10 @@ class LibraryPlaylistsViewController: UIViewController {
             
             ApiCaller.shared.createPlaylist(with: playListName) { [weak self] success in
                 if success {
+                    HapticsManager.shared.vibrate(for: .success)
                     self?.fetchPlaylistsData()
                 } else {
+                    HapticsManager.shared.vibrate(for: .error)
                     print("Failed to create playlist")
                 }
             }
